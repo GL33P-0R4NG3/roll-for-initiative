@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "name": "roll-for-initiative",
+  "description": "Purpose of this bot is to supply DnD tools for discord (full list described bellow). I wanted to make DM-ing better experience via discord.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "scripts": {
+    "test": "ping"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GL33P-0R4NG3/roll-for-initiative.git"
+  },
+  "keywords": [
+    "DnD",
+    "tool"
+  ],
+  "author": "KelmetM",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GL33P-0R4NG3/roll-for-initiative/issues"
+  },
+  "homepage": "https://github.com/GL33P-0R4NG3/roll-for-initiative#readme"
+}
