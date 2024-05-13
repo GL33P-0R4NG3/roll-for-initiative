@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const fs = require('node:fs');
 
 module.exports = {
     aliases: ['settings'],
@@ -6,7 +7,7 @@ module.exports = {
 		.setName('config')
         //.setDescriptionLocalization('cs', 'Odpoví Pong')
 		.setDescription('Replies with Pong!'),
-	async execute(interaction, cmdName) {
+	async execute(interaction, args) {
 		await interaction.reply('Pong!');
 	},
 };

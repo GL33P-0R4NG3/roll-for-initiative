@@ -1,16 +1,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 // Require the necessary discord.js classes
-const { REST, Routes, GuildMember } = require('discord.js');
+const { REST, Routes, GuildMember, ChannelType, PermissionsBitField, PermissionFlagsBits, SortOrderType } = require('discord.js');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { appID, guildID, token } = require('./config.json');
 
 // Create a new client instance
 const client = new Client({ intents: [0b111111111111111111111] });
 
-
-
-//------------------------- Slash Commands -------------------------
+//------------------------- Registering Commands -------------------------
 
 client.commands = new Collection();
 const commands = [];
@@ -116,16 +114,26 @@ const rest = new REST().setToken(token);
 	}
 })();
 
-//----------------------- END Slash Commands -----------------------
+//----------------------- END Registering Commands -----------------------
 
+//----------------------- Registering Events -----------------------
 
+const eventsPath = path.join(__dirname, 'event_handlers');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
-// When the client is ready, run this code (only once).
-// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
-// It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-});
+for (const file of eventFiles) {
+	const filePath = path.join(eventsPath, file);
+	const event = require(filePath);
+	console.log(`Registering ${event.name} event.`);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
+	}
+}
+
+//----------------------- END Registering Events -----------------------
+
 
 // Slash Command Handling
 client.on(Events.InteractionCreate, async interaction => {
@@ -149,14 +157,31 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
+client.on(Events.GuildCreate, async test => {
 
+});
+
+// When the client is ready, run this code (only once).
+// The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
+// It makes some properties non-nullable.
+client.once(Events.ClientReady, readyClient => {
+	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+});
+
+// Message and commands handling
 client.on(Events.MessageCreate, async message => {
     // Command conditions
     if (message.author.bot) return;
 
-    console.log(message.member.permissions)
+	let path = `servers/${message.guild.id}`;
+	let file = fs.readFileSync(`${path}/config.json`);
+	let config = JSON.parse(file);
+	let x = config.prefix;
 
-    let args = message.content.toLowerCase().split(' ');
+	if (!message.content.startsWith(x)) return;
+
+	//console.log(message.member.permissions);
+    let args = message.content.slice(x.length).toLowerCase().split(' ');
     const command = message.client.commands.get(args[0]);
 
     if (!command) {
@@ -170,7 +195,7 @@ client.on(Events.MessageCreate, async message => {
 
     // Command Execution
 	try {
-		await command.execute(message, args[0]);
+		await command.execute(message, args);
 	} catch (error) {
 		console.error(error);
 		if (message.replied || message.deferred) {

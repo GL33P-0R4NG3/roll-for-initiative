@@ -1,0 +1,14 @@
+{
+    "prefix": "~",
+    "privateChannels": {
+        "channels": [],
+        "initChannelVoice": "",
+        "initChannelText": ""
+    },
+    "DnD": {
+        "autojoin": false,
+        "channels": [],
+        "initChannelVoice": "",
+        "initChannelText": ""
+    }
+}
